@@ -30,6 +30,7 @@ import os
 from sklearn.utils import shuffle
 
 def train(args):
+    label_to_int = {"Refutes": 0, "Supports": 1, "Neutral": 2}
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
@@ -66,12 +67,16 @@ def train(args):
             os.makedirs(args.checkpoint+args.model_spec_b)
         checkpoint=args.checkpoint+args.model_spec_b+"/"
         #WebVer_train_emnlp
+        
+        
         df = pd.read_csv(args.data+"healthver_train.csv")
+        df=df.replace({"label": label_to_int})
         #df = df [:4000] 
         #df = shuffle(df) 
               
         #df.to_csv(args.data+"train_shuffle.csv")
         df_dev = pd.read_csv(args.data+"healthver_dev.csv")
+        df_dev=df_dev.replace({"label": label_to_int})
         
         logging.info('Creating BERT model...')
         model = BERTClassifier(args.model_spec_b, checkpoint, device)
@@ -127,7 +132,7 @@ if __name__== '__main__':
     parser = argparse.ArgumentParser()
 
     # Session parameters.
-    parser.add_argument('--model-type', type=str, default='t5',
+    parser.add_argument('--model_type', type=str, default='t5',
                         help='model type: bert or T5')
     parser.add_argument('--data', type=str, default='./data/',
                         help='data for each task')
