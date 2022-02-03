@@ -78,8 +78,9 @@ def predict(args):
         This is similar to the evaluation function, except that we’re storing the text of the claims, evidences 
         and the predicted probabilities:
         '''
-
-        df = pd.read_csv(args.data+"dina_test.csv")
+        label_to_int = {"Refutes": 0, "Supports": 1, "Neutral": 2}
+        df = pd.read_csv(args.data+"healthver_test.csv")
+        df=df.replace({"label": label_to_int})
         test_data_loader = create_data_loader(df, tokenizer, args.sequence_length_inputs, args.batch_size)
 
         y_evidences_texts,y_claims_texts, y_pred, y_test = model.get_predictions(
@@ -106,7 +107,7 @@ if __name__== '__main__':
 
     # Session parameters.
      # Session parameters.
-    parser.add_argument('--model-type', type=str, default='bert',
+    parser.add_argument('--model_type', type=str, default='bert',
                         help='model type: BERT or T5')
     parser.add_argument('--data', type=str, default='./data/',
                         help='data for each task')
